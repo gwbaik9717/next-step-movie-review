@@ -6,12 +6,7 @@ const __filename = fileURLToPath(import.meta.url); // get the resolved path to t
 const __dirname = path.dirname(__filename);
 
 export default {
-  entry: [
-    "./src/index.ts",
-    "./templates/reset.css",
-    "./templates/common.css",
-    "./templates/modal.css",
-  ],
+  entry: ["./src/index.ts", "./src/css/index.css"],
   mode: "development",
   resolve: {
     extensions: [".ts", ".js"],

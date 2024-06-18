@@ -54,14 +54,20 @@ const main = () => {
   });
 
   // 별점 폼 이벤트 관련 리스너
-  UserMovieRatingForm.elements.userRating.addEventListener(
+  UserMovieRatingForm.elements.userRating?.addEventListener(
     "mouseover",
     UserMovieRatingForm.handleHover
   );
-  UserMovieRatingForm.elements.userRating.addEventListener("mouseleave", () => {
-    UserMovieRatingForm.handleMouseLeave(currentMovie.userRating);
-  });
-  UserMovieRatingForm.elements.userRating.addEventListener(
+  UserMovieRatingForm.elements.userRating?.addEventListener(
+    "mouseleave",
+    () => {
+      if (!currentMovie) {
+        return;
+      }
+      UserMovieRatingForm.handleMouseLeave(currentMovie.userRating);
+    }
+  );
+  UserMovieRatingForm.elements.userRating?.addEventListener(
     "click",
     async (e: Event) => {
       if (!currentMovie) {
@@ -78,7 +84,7 @@ const main = () => {
   });
 
   // 검색박스 관련 이벤트 리스너
-  SearchBox.elements.searchInput?.addEventListener("input", (e: InputEvent) => {
+  SearchBox.elements.searchInput?.addEventListener("input", (e: Event) => {
     SearchBox.handleInputSearchQuery(e, app);
   });
   SearchBox.elements.searchButton?.addEventListener("click", () => {

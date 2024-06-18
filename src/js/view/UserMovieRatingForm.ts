@@ -11,11 +11,19 @@ const UserMovieRatingForm = {
   ratingScoreOptions: [2, 4, 6, 8, 10],
 
   render(movie: MovieModel) {
+    if (!UserMovieRatingForm.elements.userRating) {
+      return;
+    }
+
     UserMovieRatingForm.elements.userRating.innerHTML =
       UserMovieRatingForm.generateTemplate(movie);
   },
 
   reset() {
+    if (!UserMovieRatingForm.elements.userRating) {
+      return;
+    }
+
     UserMovieRatingForm.elements.userRating.innerHTML = "";
   },
 
@@ -25,7 +33,10 @@ const UserMovieRatingForm = {
           <div class="rating-stars">
             ${UserMovieRatingForm.ratingScoreOptions
               .map((ratingScoreOption) => {
-                const isFilled = ratingScoreOption <= movie.userRating;
+                const isFilled =
+                  movie.userRating === null
+                    ? false
+                    : ratingScoreOption <= movie.userRating;
                 return /* html */ `
                 <div class="rating-star-wrapper">
                   <img
@@ -50,10 +61,18 @@ const UserMovieRatingForm = {
   },
 
   addSkeleton() {
+    if (!UserMovieRatingForm.elements.userRating) {
+      return;
+    }
+
     UserMovieRatingForm.elements.userRating.classList.add("skeleton");
   },
 
   removeSkeleton() {
+    if (!UserMovieRatingForm.elements.userRating) {
+      return;
+    }
+
     UserMovieRatingForm.elements.userRating.classList.remove("skeleton");
   },
 

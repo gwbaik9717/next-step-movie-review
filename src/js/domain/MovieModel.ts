@@ -61,8 +61,10 @@ class MovieModel {
       const { genres } = await Api.get<MovieDetailResponseDTO>(url);
 
       this.genres = genres.map((genre) => genre.name);
-    } catch (e) {
-      alert(e.message);
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        alert(e.message);
+      }
     }
   }
 
@@ -77,8 +79,10 @@ class MovieModel {
       }
 
       this.userRating = rated.value;
-    } catch (e) {
-      alert(e.message);
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        alert(e.message);
+      }
     }
   }
 

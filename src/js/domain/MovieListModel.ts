@@ -51,8 +51,10 @@ class MovieListModel {
           })
         );
       });
-    } catch (e) {
-      alert(e.message);
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        alert(e.message);
+      }
     }
   }
 
@@ -75,8 +77,10 @@ class MovieListModel {
           })
         );
       });
-    } catch (e) {
-      alert(e.message);
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        alert(e.message);
+      }
     }
   }
 }

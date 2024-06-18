@@ -6,7 +6,8 @@
     "moduleResolution": "Node",
     "lib": ["ES2015", "DOM", "DOM.Iterable"],
     "types": ["cypress", "node"],
-    "module": "ESNext"
+    "module": "ESNext",
+    "strict": true
   },
   "include": ["**/*.ts"],
   "exclude": ["node_modules", "dist"]

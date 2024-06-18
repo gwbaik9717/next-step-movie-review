@@ -29,16 +29,28 @@ const MovieCardList = {
   },
 
   clear() {
+    if (!MovieCardList.elements.movieCardList) {
+      return;
+    }
+
     MovieCardList.elements.movieCardList.innerHTML = "";
   },
 
   addSkeleton() {
+    if (!MovieCardList.elements.movieCardList) {
+      return;
+    }
+
     MovieCardList.elements.movieCardList.append(
       ...MovieCardListSkeleton.skeletonCards
     );
   },
 
   removeSkeleton() {
+    if (!MovieCardList.elements.movieCardList) {
+      return;
+    }
+
     removeElements(
       MovieCardList.elements.movieCardList,
       MovieCardListSkeleton.selectors.SKELETON_CARD

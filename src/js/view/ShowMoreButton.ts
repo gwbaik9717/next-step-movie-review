@@ -20,10 +20,18 @@ const ShowMoreButton = {
   },
 
   show() {
+    if (!ShowMoreButton.elements.button) {
+      return;
+    }
+
     ShowMoreButton.elements.button.classList.remove("hidden");
   },
 
   hide() {
+    if (!ShowMoreButton.elements.button) {
+      return;
+    }
+
     ShowMoreButton.elements.button.classList.add("hidden");
   },
 };

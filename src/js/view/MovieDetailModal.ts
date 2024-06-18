@@ -15,16 +15,34 @@ const MovieDetailModal = {
   },
 
   open(movie: MovieModel) {
+    if (!MovieDetailModal.elements.modal) {
+      return;
+    }
+
     MovieDetailModal.elements.modal.classList.add("open");
     MovieDetailModal.render(movie);
   },
 
   close() {
+    if (!MovieDetailModal.elements.modal) {
+      return;
+    }
+
     this.reset();
     MovieDetailModal.elements.modal.classList.remove("open");
   },
 
   reset() {
+    if (
+      !MovieDetailModal.elements.modal ||
+      !MovieDetailModal.elements.movieTitle ||
+      !MovieDetailModal.elements.movieThumbnail ||
+      !MovieDetailModal.elements.movieHeader ||
+      !MovieDetailModal.elements.movieOverview
+    ) {
+      return;
+    }
+
     MovieDetailModal.elements.movieTitle.textContent = "";
     MovieDetailModal.elements.movieThumbnail.innerHTML = "";
     MovieDetailModal.elements.movieHeader.innerHTML = "";
@@ -33,24 +51,42 @@ const MovieDetailModal = {
   },
 
   addSkeleton() {
-    MovieDetailModal.elements.movieThumbnail.classList.add("skeleton");
-    MovieDetailModal.elements.movieHeader.classList.add("skeleton");
-    MovieDetailModal.elements.movieOverview.classList.add("skeleton");
+    if (
+      !MovieDetailModal.elements.movieThumbnail ||
+      !MovieDetailModal.elements.movieHeader ||
+      !MovieDetailModal.elements.movieOverview
+    ) {
+      return;
+    }
+
     UserMovieRatingForm.addSkeleton();
   },
 
   removeSkeleton() {
-    MovieDetailModal.elements.movieThumbnail.classList.remove("skeleton");
-    MovieDetailModal.elements.movieHeader.classList.remove("skeleton");
-    MovieDetailModal.elements.movieOverview.classList.remove("skeleton");
+    if (
+      !MovieDetailModal.elements.movieThumbnail ||
+      !MovieDetailModal.elements.movieHeader ||
+      !MovieDetailModal.elements.movieOverview
+    ) {
+      return;
+    }
+
     UserMovieRatingForm.removeSkeleton();
   },
 
   renderMovieTitle(title: string) {
+    if (!MovieDetailModal.elements.movieTitle) {
+      return;
+    }
+
     MovieDetailModal.elements.movieTitle.textContent = title;
   },
 
   renderMovieThumbnail(thumbnail: string, title: string) {
+    if (!MovieDetailModal.elements.movieThumbnail) {
+      return;
+    }
+
     MovieDetailModal.elements.movieThumbnail.innerHTML = /* html */ `
       <img
         src=${thumbnail}
@@ -60,6 +96,10 @@ const MovieDetailModal = {
   },
 
   renderMovieHeader(genres: string[], rating: number) {
+    if (!MovieDetailModal.elements.movieHeader) {
+      return;
+    }
+
     MovieDetailModal.elements.movieHeader.innerHTML = /* html */ `
       <span class="modal-genres">${genres.join(", ")}</span>
       <img src="./images/star_filled.png" alt="별점" /> ${rating}
@@ -67,6 +107,10 @@ const MovieDetailModal = {
   },
 
   renderMovieOverview(overview: string) {
+    if (!MovieDetailModal.elements.movieOverview) {
+      return;
+    }
+
     MovieDetailModal.elements.movieOverview.textContent = overview;
   },
 

@@ -1,5 +1,3 @@
-import Api from "../../src/js/domain/Api";
-
 const selectors = {
   "item-card": ".item-card",
   "show-more": ".show-more",
@@ -8,10 +6,7 @@ const selectors = {
 
 describe("영화 카드 목록 기능 테스트", () => {
   beforeEach(() => {
-    const url = Api.generatePopularMoviesUrl(1);
-    cy.intercept("GET", url, {
-      fixture: "movieList.json",
-    }).as("getPopularMovies");
+    cy.interceptGetPopularMovies(1);
     cy.visit("http://localhost:8080/");
     cy.wait("@getPopularMovies");
   });
@@ -26,28 +21,20 @@ describe("영화 카드 목록 기능 테스트", () => {
   });
 
   it("로딩 중일 때 스켈레톤 카드가 보인다.", () => {
-    cy.intercept("GET", Api.generatePopularMoviesUrl(2), {
-      delay: 1000,
-    }).as("getMovies");
+    cy.interceptGetPopularMovies(2);
 
-    cy.get(selectors["show-more"]).click(); // fetch next page
+    // fetch next page
+    cy.get(selectors["show-more"]).click();
+
     cy.get(selectors["skeleton-card"]).should("be.visible");
-    cy.wait("@getMovies");
+    cy.wait("@getPopularMovies");
     cy.get(selectors["skeleton-card"]).should("not.exist");
   });
 
   it("영화 카드가 20개 미만이면 더보기 버튼이 보이지 않아야 한다.", () => {
-    // mock the response to return an empty array
-    cy.intercept(Api.generatePopularMoviesUrl(2), (req) => {
-      req.continue((res) => {
-        res.send({ results: [] });
-      });
-    }).as("getMovies");
-
+    cy.interceptGetEmptyPopularMovies(2);
     cy.get(selectors["show-more"]).click();
-
-    cy.wait("@getMovies");
-
+    cy.wait("@getPopularMovies");
     cy.get(selectors["show-more"]).should("not.be.visible");
   });
 });

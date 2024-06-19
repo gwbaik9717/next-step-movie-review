@@ -11,19 +11,13 @@ describe("검색창 기능 테스트", () => {
   const query = "Harry Potter";
 
   beforeEach(() => {
-    cy.intercept(Api.generatePopularMoviesUrl(1), {
-      fixture: "movieList.json",
-      delay: 1000,
-    }).as("getPopularMovies");
-    cy.intercept(Api.generateSearchMoviesUrl(query, 1), {
-      delay: 1000,
-    }).as("searchMovies");
+    cy.interceptGetPopularMovies(1);
+    cy.interceptSearchMovies(query, 1);
     cy.visit("http://localhost:8080/");
     cy.wait("@getPopularMovies");
   });
 
   it("검색어를 입력하면 input 의 value 값이 바뀐다.", () => {
-    const query = "Harry Potter";
     cy.get(selectors.searchInput).type(query).should("have.value", query);
   });
 

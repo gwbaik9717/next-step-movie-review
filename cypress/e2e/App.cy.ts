@@ -3,6 +3,13 @@ import App from "../../src/js/domain/App";
 import MovieListModel from "../../src/js/domain/MovieListModel";
 
 describe("앱 기능 테스트", async () => {
+  const searchQuery = "Harry Potter";
+
+  beforeEach(() => {
+    cy.interceptGetPopularMovies(1);
+    cy.interceptSearchMovies(searchQuery, 1);
+  });
+
   it("앱 초기화시 영화 목록의 첫번째 페이지를 비동기 통신(TMDB 인기순 api)으로 불러온다.", async () => {
     const app = new App();
     const movieList = new MovieListModel();
@@ -20,6 +27,8 @@ describe("앱 기능 테스트", async () => {
     // 첫번째 페이지의 영화 목록을 불러온다.
     await app.init(movieList);
 
+    cy.interceptGetPopularMovies(2);
+
     // 두번째 페이지의 영화 목록을 불러온다.
     await app.fetchNextPage(movieList);
 
@@ -36,7 +45,7 @@ describe("앱 기능 테스트", async () => {
     await app.fetchNextPage(movieList);
 
     // 영화 검색
-    app.searchQuery = "Harry Potter";
+    app.searchQuery = searchQuery;
     await app.searchMovies(movieList);
 
     expect(app.currentPage).to.equal(1);
@@ -44,6 +53,9 @@ describe("앱 기능 테스트", async () => {
   });
 
   it("빈 스트링을 검색하면 페이지 정보가 초기화되고, 영화 인기 목록으로 영화 목록을 overwrite 한다.", async () => {
+    cy.interceptGetPopularMovies(2);
+    cy.interceptSearchMovies("", 1);
+
     const app = new App();
     const movieList = new MovieListModel();
     await app.init(movieList);

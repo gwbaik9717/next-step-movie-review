@@ -1,13 +1,14 @@
+import { Page } from "../types";
 import "./commands";
 
 declare global {
   namespace Cypress {
     interface Chainable {
-      interceptGetEmptyPopularMovies(page: number): void;
+      interceptGetEmptyPopularMovies(page: Page): void;
     }
 
     interface Chainable {
-      interceptGetPopularMovies(page: number): void;
+      interceptGetPopularMovies(page: Page): void;
     }
 
     interface Chainable {
@@ -15,7 +16,7 @@ declare global {
     }
 
     interface Chainable {
-      interceptSearchMovies(query: string, page: number): void;
+      interceptSearchMovies(query: string, page: Page): void;
     }
 
     interface Chainable {
@@ -29,18 +30,30 @@ declare global {
     interface Chainable {
       interceptPostUserRating(movieId: number): void;
     }
+
+    interface Chainable {
+      interceptPostUserRatingFail(movieId: number): void;
+    }
   }
 }
 
 const selectors = {
   itemCard: ".item-card",
-  modal: ".modal",
-  modalCloseBtn: ".modal-close",
   movieTitle: ".movie-title",
   movieHeader: ".movie-header",
   movieOverview: ".movie-overview",
   movieThumbnail: ".movie-thumbnail",
+  showMore: ".show-more",
   skeleton: ".skeleton",
+  skeletonCard: ".skeleton-card",
+  searchInput: ".search-input",
+  searchButton: ".search-button",
+  modal: ".modal",
+  modalCloseBtn: ".modal-close",
+  modalBody: ".modal-body",
+  userRating: ".user-rating",
+  ratingStar: ".rating-star",
+  ratingScore: ".rating-score",
 };
 
 export { selectors };

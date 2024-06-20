@@ -1,4 +1,3 @@
-import Api from "../../src/js/domain/Api";
 import MovieListModel from "../../src/js/domain/MovieListModel";
 
 describe("영화 목록 기능 테스트", () => {
@@ -15,7 +14,9 @@ describe("영화 목록 기능 테스트", () => {
 
     await movieList.fetchMovies(currentPage);
 
-    expect(movieList.movies).to.have.length(Api.NUM_MOVIES_PER_PAGE);
+    cy.fixture("movieListPage1.json").then(({ results }) => {
+      expect(movieList.movies).to.have.length(results.length);
+    });
   });
 
   it("영화 검색 API를 호출하고 검색된 영화 목록을 저장한다.", async () => {
@@ -24,6 +25,8 @@ describe("영화 목록 기능 테스트", () => {
 
     await movieList.searchMovies(searchQuery, page);
 
-    expect(movieList.movies).to.have.length.within(0, Api.NUM_MOVIES_PER_PAGE);
+    cy.fixture("movieListSearchResult.json").then(({ results }) => {
+      expect(movieList.movies).to.have.length(results.length);
+    });
   });
 });

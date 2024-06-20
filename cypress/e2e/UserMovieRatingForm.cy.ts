@@ -1,18 +1,6 @@
 import ErrorMessage from "../../src/js/ErrorMessage";
-import Api from "../../src/js/domain/Api";
 import UserMovieRatingForm from "../../src/js/view/UserMovieRatingForm";
-
-const selectors = {
-  itemCard: ".item-card",
-  modal: ".modal",
-  modalCloseBtn: ".modal-close",
-  movieTitle: ".movie-title",
-  modalBody: ".modal-body",
-  skeleton: ".skeleton",
-  userRating: ".user-rating",
-  ratingStar: ".rating-star",
-  ratingScore: ".rating-score",
-};
+import { selectors } from "../../cypress/support/index";
 
 describe("사용자 영화 평점 폼 기능 테스트", () => {
   context("공통 기능 테스트", () => {
@@ -26,10 +14,7 @@ describe("사용자 영화 평점 폼 기능 테스트", () => {
         .invoke("attr", "data-id")
         .then((movieId) => {
           cy.interceptGetMovieDetail(Number(movieId));
-          cy.intercept("GET", Api.generateMovieUserRatingUrl(Number(movieId)), {
-            delay: 1000,
-            fixture: "movieUserRatingExists.json",
-          }).as("getUserRating");
+          cy.interceptGetMovieUserRatingExists(Number(movieId));
           cy.interceptPostUserRating(Number(movieId));
 
           cy.get(selectors.itemCard).first().click();
@@ -133,18 +118,7 @@ describe("사용자 영화 평점 폼 기능 테스트", () => {
         .first()
         .invoke("attr", "data-id")
         .then((movieId) => {
-          cy.intercept(
-            "POST",
-            Api.generatePostMovieUserRatingUrl(Number(movieId)),
-            (req) => {
-              req.reply((res) => {
-                res.send({
-                  statusCode: 500,
-                  body: {},
-                });
-              });
-            }
-          ).as("postUserRating");
+          cy.interceptPostUserRatingFail(Number(movieId));
 
           cy.wait("@getMovieDetail");
           cy.wait("@getUserRating");
@@ -174,10 +148,7 @@ describe("사용자 영화 평점 폼 기능 테스트", () => {
         .invoke("attr", "data-id")
         .then((movieId) => {
           cy.interceptGetMovieDetail(Number(movieId));
-          cy.intercept("GET", Api.generateMovieUserRatingUrl(Number(movieId)), {
-            delay: 1000,
-            fixture: "movieUserRatingExists.json",
-          }).as("getUserRating");
+          cy.interceptGetMovieUserRatingExists(Number(movieId));
 
           cy.get(selectors.itemCard).first().click();
         });
@@ -216,11 +187,7 @@ describe("사용자 영화 평점 폼 기능 테스트", () => {
         .invoke("attr", "data-id")
         .then((movieId) => {
           cy.interceptGetMovieDetail(Number(movieId));
-          cy.intercept("GET", Api.generateMovieUserRatingUrl(Number(movieId)), {
-            delay: 1000,
-            fixture: "movieUserRatingNonExists.json",
-          }).as("getUserRating");
-
+          cy.interceptGetMovieUserRatingNotExists(Number(movieId));
           cy.get(selectors.itemCard).first().click();
         });
     });

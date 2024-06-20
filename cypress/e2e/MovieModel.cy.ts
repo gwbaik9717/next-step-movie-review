@@ -1,4 +1,3 @@
-import Api from "../../src/js/domain/Api";
 import MovieModel from "../../src/js/domain/MovieModel";
 import {
   MovieDetailResponseDTO,
@@ -22,15 +21,7 @@ describe("영화 기능 테스트", () => {
   });
 
   it("영화는 id, 썸네일, 제목, 평점, overview 로 이루어져있다.", () => {
-    const movie = new MovieModel({
-      id: 1,
-      title: "테스트",
-      rating: 5,
-      thumbnail: "test.jpg",
-      overview: "",
-    });
-
-    expect(movie.id).to.equal(1);
+    expect(movie.id).to.equal(movieId);
     expect(movie.title).to.equal("테스트");
     expect(movie.rating).to.equal(5);
     expect(movie.thumbnail).to.equal("test.jpg");
@@ -42,16 +33,7 @@ describe("영화 기능 테스트", () => {
       async (movieDetail) => {
         const genres = movieDetail.genres;
 
-        cy.intercept(Api.generateMovieDetailUrl(movieId), (req) => {
-          req.continue((res) => {
-            res.send({
-              genres,
-            });
-          });
-        }).as("getMovieDetail");
-
         await movie.fetchMovieDetail();
-
         expect(movie.genres).to.deep.equals(genres.map((genre) => genre.name));
       }
     );
@@ -87,8 +69,8 @@ describe("영화 기능 테스트", () => {
 
   it("사용자가 영화를 평가하는 API를 호출하고 userRating 에 저장한다.", async () => {
     const userRating = 4.5;
-    await movie.postMovieUserRating(userRating);
 
+    await movie.postMovieUserRating(userRating);
     expect(movie.userRating).to.equal(userRating);
   });
 });

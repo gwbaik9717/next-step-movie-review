@@ -18,7 +18,7 @@ const Api = {
       page: page.toString(),
     });
 
-    return `${this.BASE_URL}/movie/popular?${param}`;
+    return `/movie/popular?${param}`;
   },
 
   generateSearchMoviesUrl(query: string, page: number): string {
@@ -28,7 +28,7 @@ const Api = {
       page: page.toString(),
     });
 
-    return `${this.BASE_URL}/search/movie?${param}`;
+    return `/search/movie?${param}`;
   },
 
   generateMovieDetailUrl(movieId: number): string {
@@ -36,15 +36,15 @@ const Api = {
       language: this.LANGUAGE,
     });
 
-    return `${this.BASE_URL}/movie/${movieId}?${param}`;
+    return `/movie/${movieId}?${param}`;
   },
 
   generateMovieUserRatingUrl(movieId: number): string {
-    return `${this.BASE_URL}/movie/${movieId}/account_states`;
+    return `/movie/${movieId}/account_states`;
   },
 
   generatePostMovieUserRatingUrl(movieId: number): string {
-    return `${this.BASE_URL}/movie/${movieId}/rating`;
+    return `/movie/${movieId}/rating`;
   },
 
   throwError(status: number) {
@@ -59,43 +59,41 @@ const Api = {
   },
 
   async get<T>(url: string): Promise<T> {
-    const options = {
-      method: "GET",
-      headers: {
-        accept: "application/json",
-        Authorization: `Bearer ${this.API_ACCESS_TOKEN}`,
-      },
-    };
-    const response = await fetch(url, options);
-
-    if (!response.ok) {
-      this.throwError(response.status);
-    }
-
-    return await response.json();
+    return await this.request<T>("GET", url);
   },
 
-  async post<T, U>(url: string, body?: T): Promise<U> {
+  async post<T>(url: string, body: unknown): Promise<T> {
+    return await this.request<T>("POST", url, body);
+  },
+
+  async request<T>(
+    method: string,
+    endpoint: string,
+    body?: unknown
+  ): Promise<T> {
+    const url = `${this.BASE_URL}${endpoint}`;
+
     const options: RequestInit = {
-      method: "POST",
+      method,
       headers: {
         accept: "application/json",
-        "Content-Type": "application/json;charset=utf-8",
         Authorization: `Bearer ${this.API_ACCESS_TOKEN}`,
       },
+      body: body ? JSON.stringify(body) : null,
     };
 
-    if (body) {
-      options.body = JSON.stringify(body);
+    try {
+      const response = await fetch(url, options);
+      const data = await response.json();
+
+      if (!response.ok) {
+        this.throwError(response.status);
+      }
+
+      return data;
+    } catch (e) {
+      throw e;
     }
-
-    const response = await fetch(url, options);
-
-    if (!response.ok) {
-      this.throwError(response.status);
-    }
-
-    return await response.json();
   },
 };
 

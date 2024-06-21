@@ -90,7 +90,7 @@ class MovieModel {
     const url = Api.generatePostMovieUserRatingUrl(this.#id);
 
     try {
-      await Api.post<MovieUserRatingRequestDTO, unknown>(url, {
+      await Api.post<MovieUserRatingRequestDTO>(url, {
         value: rating,
       });
 

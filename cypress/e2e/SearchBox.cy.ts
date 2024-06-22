@@ -4,8 +4,8 @@ describe("검색창 기능 테스트", () => {
   const query = "Harry Potter";
 
   beforeEach(() => {
-    cy.interceptGetPopularMovies(1);
-    cy.interceptSearchMovies(query, 1);
+    cy.interceptGetPopularMovies(1).as("getPopularMovies");
+    cy.interceptSearchMovies(query, 1).as("searchMovies");
     cy.visit("http://localhost:8080/");
     cy.wait("@getPopularMovies");
   });

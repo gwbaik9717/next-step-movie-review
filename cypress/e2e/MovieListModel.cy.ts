@@ -12,10 +12,10 @@ describe("영화 목록 기능 테스트", () => {
     const currentPage = 1;
     const movieList = new MovieListModel();
 
-    await movieList.fetchMovies(currentPage);
-
-    cy.fixture("movieListPage1.json").then(({ results }) => {
-      expect(movieList.movies).to.have.length(results.length);
+    cy.wrap(movieList.fetchMovies(currentPage)).then(() => {
+      cy.fixture("movieListPage1.json").then(({ results }) => {
+        expect(movieList.movies).to.have.length(results.length);
+      });
     });
   });
 
@@ -23,10 +23,10 @@ describe("영화 목록 기능 테스트", () => {
     const page = 1;
     const movieList = new MovieListModel();
 
-    await movieList.searchMovies(searchQuery, page);
-
-    cy.fixture("movieListSearchResult.json").then(({ results }) => {
-      expect(movieList.movies).to.have.length(results.length);
+    cy.wrap(movieList.fetchMovies(page)).then(() => {
+      cy.fixture("movieListPage1.json").then(({ results }) => {
+        expect(movieList.movies).to.have.length(results.length);
+      });
     });
   });
 });

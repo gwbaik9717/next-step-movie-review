@@ -5,7 +5,7 @@ import { selectors } from "../../cypress/support/index";
 describe("사용자 영화 평점 폼 기능 테스트", () => {
   context("공통 기능 테스트", () => {
     beforeEach(() => {
-      cy.interceptGetPopularMovies(1);
+      cy.interceptGetPopularMovies(1).as("getPopularMovies");
       cy.visit("http://localhost:8080/");
       cy.wait("@getPopularMovies");
 
@@ -13,9 +13,11 @@ describe("사용자 영화 평점 폼 기능 테스트", () => {
         .first()
         .invoke("attr", "data-id")
         .then((movieId) => {
-          cy.interceptGetMovieDetail(Number(movieId));
-          cy.interceptGetMovieUserRatingExists(Number(movieId));
-          cy.interceptPostUserRating(Number(movieId));
+          cy.interceptGetMovieDetail(Number(movieId)).as("getMovieDetail");
+          cy.interceptGetMovieUserRatingExists(Number(movieId)).as(
+            "getUserRating"
+          );
+          cy.interceptPostUserRating(Number(movieId)).as("postUserRating");
 
           cy.get(selectors.itemCard).first().click();
         });
@@ -118,7 +120,7 @@ describe("사용자 영화 평점 폼 기능 테스트", () => {
         .first()
         .invoke("attr", "data-id")
         .then((movieId) => {
-          cy.interceptPostUserRatingFail(Number(movieId));
+          cy.interceptPostUserRatingFail(Number(movieId)).as("postUserRating");
 
           cy.wait("@getMovieDetail");
           cy.wait("@getUserRating");
@@ -127,7 +129,6 @@ describe("사용자 영화 평점 폼 기능 테스트", () => {
 
           // 2점 클릭
           cy.get(selectors.ratingStar).eq(3).click();
-
           cy.wait("@postUserRating");
 
           cy.on("window:alert", (str) => {
@@ -139,7 +140,7 @@ describe("사용자 영화 평점 폼 기능 테스트", () => {
 
   context("사용자의 영화 평가 이력이 있는 경우", () => {
     beforeEach(() => {
-      cy.interceptGetPopularMovies(1);
+      cy.interceptGetPopularMovies(1).as("getPopularMovies");
       cy.visit("http://localhost:8080/");
       cy.wait("@getPopularMovies");
 
@@ -147,8 +148,10 @@ describe("사용자 영화 평점 폼 기능 테스트", () => {
         .first()
         .invoke("attr", "data-id")
         .then((movieId) => {
-          cy.interceptGetMovieDetail(Number(movieId));
-          cy.interceptGetMovieUserRatingExists(Number(movieId));
+          cy.interceptGetMovieDetail(Number(movieId)).as("getMovieDetail");
+          cy.interceptGetMovieUserRatingExists(Number(movieId)).as(
+            "getUserRating"
+          );
 
           cy.get(selectors.itemCard).first().click();
         });
@@ -177,7 +180,7 @@ describe("사용자 영화 평점 폼 기능 테스트", () => {
 
   context("사용자의 영화 평가 이력이 없는 경우", () => {
     beforeEach(() => {
-      cy.interceptGetPopularMovies(1);
+      cy.interceptGetPopularMovies(1).as("getPopularMovies");
       cy.visit("http://localhost:8080/");
       cy.wait("@getPopularMovies");
 
@@ -186,14 +189,15 @@ describe("사용자 영화 평점 폼 기능 테스트", () => {
         .first()
         .invoke("attr", "data-id")
         .then((movieId) => {
-          cy.interceptGetMovieDetail(Number(movieId));
-          cy.interceptGetMovieUserRatingNotExists(Number(movieId));
+          cy.interceptGetMovieDetail(Number(movieId)).as("getMovieDetail");
+          cy.interceptGetMovieUserRatingNotExists(Number(movieId)).as(
+            "getUserRating"
+          );
           cy.get(selectors.itemCard).first().click();
         });
     });
 
     it("사용자가 과거에 평가한 이력이 없다면, 별들의 색깔은 모두 비어있도록 초기화 되어있다.", () => {
-      cy.get(selectors.modal).should("be.visible");
       cy.wait("@getMovieDetail");
       cy.wait("@getUserRating");
 

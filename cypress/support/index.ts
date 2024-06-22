@@ -4,35 +4,39 @@ import "./commands";
 declare global {
   namespace Cypress {
     interface Chainable {
-      interceptGetEmptyPopularMovies(page: Page): void;
+      interceptGetEmptyPopularMovies(page: Page): Chainable;
     }
 
     interface Chainable {
-      interceptGetPopularMovies(page: Page): void;
+      interceptGetPopularMovies(page: Page): Chainable;
     }
 
     interface Chainable {
-      interceptGetMovieDetail(movieId: number): void;
+      interceptGetMovieDetail(movieId: number): Chainable;
     }
 
     interface Chainable {
-      interceptSearchMovies(query: string, page: Page): void;
+      interceptSearchMovies(query: string, page: Page): Chainable;
     }
 
     interface Chainable {
-      interceptGetMovieUserRatingExists(movieId: number): void;
+      interceptGetMovieUserRatingExists(movieId: number): Chainable;
     }
 
     interface Chainable {
-      interceptGetMovieUserRatingNotExists(movieId: number): void;
+      interceptGetMovieUserRatingNotExists(movieId: number): Chainable;
     }
 
     interface Chainable {
-      interceptPostUserRating(movieId: number): void;
+      interceptPostUserRating(movieId: number): Chainable;
     }
 
     interface Chainable {
-      interceptPostUserRatingFail(movieId: number): void;
+      interceptPostUserRatingFail(movieId: number): Chainable;
+    }
+
+    interface Chainable {
+      requestApi(method: string, endpoint: string, body?: unknown): Chainable;
     }
   }
 }

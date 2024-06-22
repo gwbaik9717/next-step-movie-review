@@ -2,7 +2,7 @@ import { selectors } from "../../cypress/support/index";
 
 describe("영화 카드 목록 기능 테스트", () => {
   beforeEach(() => {
-    cy.interceptGetPopularMovies(1);
+    cy.interceptGetPopularMovies(1).as("getPopularMovies");
     cy.visit("http://localhost:8080/");
     cy.wait("@getPopularMovies");
   });
@@ -29,7 +29,7 @@ describe("영화 카드 목록 기능 테스트", () => {
   });
 
   it("로딩 중일 때 스켈레톤 카드가 보인다.", () => {
-    cy.interceptGetPopularMovies(2);
+    cy.interceptGetPopularMovies(2).as("getPopularMovies");
 
     // fetch next page
     cy.get(selectors.showMore).click();
@@ -40,7 +40,7 @@ describe("영화 카드 목록 기능 테스트", () => {
   });
 
   it("영화 카드가 20개 미만이면 더보기 버튼이 보이지 않아야 한다.", () => {
-    cy.interceptGetEmptyPopularMovies(2);
+    cy.interceptGetEmptyPopularMovies(2).as("getPopularMovies");
 
     // fetch next page
     cy.get(selectors.showMore).click();

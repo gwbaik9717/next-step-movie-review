@@ -58,12 +58,12 @@ const Api = {
     }
   },
 
-  async get<T>(url: string): Promise<T> {
-    return await this.request<T>("GET", url);
+  async get<T>(endpoint: string): Promise<T> {
+    return await this.request<T>("GET", endpoint);
   },
 
-  async post<T>(url: string, body: unknown): Promise<T> {
-    return await this.request<T>("POST", url, body);
+  async post<T>(endpoint: string, body: unknown): Promise<T> {
+    return await this.request<T>("POST", endpoint, body);
   },
 
   async request<T>(
@@ -77,6 +77,7 @@ const Api = {
       method,
       headers: {
         accept: "application/json",
+        "Content-Type": "application/json;charset=utf-8",
         Authorization: `Bearer ${this.API_ACCESS_TOKEN}`,
       },
       body: body ? JSON.stringify(body) : null,

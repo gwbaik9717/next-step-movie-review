@@ -2,7 +2,7 @@ import { selectors } from "../support/index";
 
 describe("영화 상세 모달 기능 테스트", () => {
   beforeEach(() => {
-    cy.interceptGetPopularMovies(1);
+    cy.interceptGetPopularMovies(1).as("getPopularMovies");
     cy.visit("http://localhost:8080/");
     cy.wait("@getPopularMovies");
 
@@ -11,8 +11,10 @@ describe("영화 상세 모달 기능 테스트", () => {
       .first()
       .invoke("attr", "data-id")
       .then((movieId) => {
-        cy.interceptGetMovieDetail(Number(movieId));
-        cy.interceptGetMovieUserRatingExists(Number(movieId));
+        cy.interceptGetMovieDetail(Number(movieId)).as("getMovieDetail");
+        cy.interceptGetMovieUserRatingExists(Number(movieId)).as(
+          "getUserRating"
+        );
         cy.get(selectors.itemCard).first().click();
       });
   });

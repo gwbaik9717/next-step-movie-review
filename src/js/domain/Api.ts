@@ -58,8 +58,9 @@ const Api = {
     } catch (e: unknown) {
       console.error(e);
 
-      if (e instanceof ApiError) {
-        switch (e.code) {
+      // if e is number
+      if (typeof e === "number") {
+        switch (e) {
           case 401:
             throw Error(ErrorMessage.UNAUTHORIZED);
           case 404:
@@ -70,6 +71,8 @@ const Api = {
             throw Error(ErrorMessage.DEFAULT);
         }
       }
+
+      throw e;
     }
   },
 
@@ -85,8 +88,9 @@ const Api = {
     } catch (e: unknown) {
       console.error(e);
 
-      if (e instanceof ApiError) {
-        switch (e.code) {
+      // if e is number
+      if (typeof e === "number") {
+        switch (e) {
           case 401:
             throw Error(ErrorMessage.UNAUTHORIZED);
           case 404:
@@ -97,6 +101,8 @@ const Api = {
             throw Error(ErrorMessage.DEFAULT);
         }
       }
+
+      throw e;
     }
   },
 
@@ -110,8 +116,9 @@ const Api = {
     } catch (e) {
       console.error(e);
 
-      if (e instanceof ApiError) {
-        switch (e.code) {
+      // if e is number
+      if (typeof e === "number") {
+        switch (e) {
           case 401:
             throw Error(ErrorMessage.UNAUTHORIZED);
           case 404:
@@ -122,6 +129,8 @@ const Api = {
             throw Error(ErrorMessage.DEFAULT);
         }
       }
+
+      throw e;
     }
   },
 
@@ -137,8 +146,9 @@ const Api = {
     } catch (e) {
       console.error(e);
 
-      if (e instanceof ApiError) {
-        switch (e.code) {
+      // if e is number
+      if (typeof e === "number") {
+        switch (e) {
           case 401:
             throw Error(ErrorMessage.UNAUTHORIZED);
           case 404:
@@ -149,6 +159,8 @@ const Api = {
             throw Error(ErrorMessage.DEFAULT);
         }
       }
+
+      throw e;
     }
   },
 
@@ -164,8 +176,9 @@ const Api = {
     } catch (e) {
       console.error(e);
 
-      if (e instanceof ApiError) {
-        switch (e.code) {
+      // if e is number
+      if (typeof e === "number") {
+        switch (e) {
           case 401:
             throw Error(ErrorMessage.UNAUTHORIZED);
           case 404:
@@ -176,6 +189,8 @@ const Api = {
             throw Error(ErrorMessage.DEFAULT);
         }
       }
+
+      throw e;
     }
   },
 };

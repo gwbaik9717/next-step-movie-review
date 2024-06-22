@@ -116,11 +116,22 @@ const MovieDetailModal = {
 
   async render(movie: MovieModel) {
     MovieDetailModal.renderMovieTitle(movie.title);
-
     MovieDetailModal.addSkeleton();
-    await Promise.all([movie.fetchMovieDetail(), movie.fetchMovieUserRating()]);
-    MovieDetailModal.removeSkeleton();
 
+    try {
+      await Promise.all([
+        movie.fetchMovieDetail(),
+        movie.fetchMovieUserRating(),
+      ]);
+    } catch (e) {
+      if (e instanceof Error) {
+        alert(e.message);
+      }
+
+      return;
+    }
+
+    MovieDetailModal.removeSkeleton();
     MovieDetailModal.renderMovieThumbnail(movie.thumbnail, movie.title);
     MovieDetailModal.renderMovieHeader(movie.genres, movie.rating);
     MovieDetailModal.renderMovieOverview(movie.overview);

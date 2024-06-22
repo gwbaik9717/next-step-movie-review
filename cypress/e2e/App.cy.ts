@@ -40,7 +40,7 @@ describe("앱 기능 테스트", async () => {
     });
   });
 
-  it("영화 검색 결과를 불러오면 기존 페이지에 대한 정보를 초기화 한다.", () => {
+  it("영화 검색 결과를 불러오면 기존 페이지에 대한 정보를 초기화한다.", () => {
     const app = new App();
     const movieList = new MovieListModel();
 

@@ -10,24 +10,44 @@ class App {
 
   async fetchMovieList(movieList: MovieListModel) {
     if (this.searchQuery) {
-      await movieList.searchMovies(this.searchQuery, this.currentPage);
+      try {
+        await movieList.searchMovies(this.searchQuery, this.currentPage);
+      } catch (e) {
+        if (e instanceof Error) {
+          alert(e.message);
+        }
+      }
+
       return;
     }
 
-    await movieList.fetchMovies(this.currentPage);
+    try {
+      await movieList.fetchMovies(this.currentPage);
+    } catch (e) {
+      if (e instanceof Error) {
+        alert(e.message);
+      }
+    }
   }
 
   async fetchNextPage(movieList: MovieListModel) {
-    this.currentPage++;
-
-    await this.fetchMovieList(movieList);
+    try {
+      this.currentPage++;
+      await this.fetchMovieList(movieList);
+    } catch (e) {
+      this.currentPage--;
+      throw e;
+    }
   }
 
   async searchMovies(movieList: MovieListModel) {
-    this.currentPage = 1;
-    movieList.clearMovies();
-
-    await this.fetchMovieList(movieList);
+    try {
+      this.currentPage = 1;
+      movieList.clearMovies();
+      await this.fetchMovieList(movieList);
+    } catch (e) {
+      throw e;
+    }
   }
 }
 

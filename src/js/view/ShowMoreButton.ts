@@ -11,7 +11,13 @@ const ShowMoreButton = {
   async handleClick(app: App, movieList: MovieListModel) {
     MovieCardList.addSkeleton();
 
-    await app.fetchNextPage(movieList);
+    try {
+      await app.fetchNextPage(movieList);
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        alert(e.message);
+      }
+    }
 
     MovieCardList.removeSkeleton();
 

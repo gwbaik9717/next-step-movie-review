@@ -1,13 +1,14 @@
+import {
+  MovieDetailResponseDTO,
+  MovieUserRatingRequestDTO,
+  MovieUserRatingResponseDTO,
+  PopularMovieListResponseDTO,
+} from "../../types/MovieApiDTO";
 import ErrorMessage from "../ErrorMessage";
+import ApiClient from "./ApiClient";
+import ApiError from "./ApiError";
 
 const Api = {
-  API_KEY: window.Cypress
-    ? Cypress.env("TMDB_API_KEY")
-    : process.env.TMDB_API_KEY,
-  API_ACCESS_TOKEN: window.Cypress
-    ? Cypress.env("TMDB_API_ACCESS_TOKEN")
-    : process.env.TMDB_API_ACCESS_TOKEN,
-  BASE_URL: "https://api.themoviedb.org/3",
   THUMBNAIL_URL: "https://image.tmdb.org/t/p/w500",
   LANGUAGE: "ko-KR",
   NUM_MOVIES_PER_PAGE: 20,
@@ -47,53 +48,134 @@ const Api = {
     return `/movie/${movieId}/rating`;
   },
 
-  throwError(status: number) {
-    switch (status) {
-      case 401:
-        throw new Error(ErrorMessage.NOT_VALID_API_KEY);
-      case 404:
-        throw new Error(ErrorMessage.NOT_VALID_URL);
-      default:
-        throw new Error(ErrorMessage.DEFAULT);
+  async getMovieDetail(movieId: number) {
+    const endpoint = this.generateMovieDetailUrl(movieId);
+
+    try {
+      const { genres } = await ApiClient.get<MovieDetailResponseDTO>(endpoint);
+
+      return genres;
+    } catch (e: unknown) {
+      console.error(e);
+
+      if (e instanceof ApiError) {
+        switch (e.code) {
+          case 401:
+            throw Error(ErrorMessage.UNAUTHORIZED);
+          case 404:
+            throw Error(ErrorMessage.NOT_VALID_URL);
+          case 500:
+            throw Error(ErrorMessage.INTERNAL_SERVER_ERROR);
+          default:
+            throw Error(ErrorMessage.DEFAULT);
+        }
+      }
     }
   },
 
-  async get<T>(endpoint: string): Promise<T> {
-    return await this.request<T>("GET", endpoint);
-  },
-
-  async post<T>(endpoint: string, body: unknown): Promise<T> {
-    return await this.request<T>("POST", endpoint, body);
-  },
-
-  async request<T>(
-    method: string,
-    endpoint: string,
-    body?: unknown
-  ): Promise<T> {
-    const url = `${this.BASE_URL}${endpoint}`;
-
-    const options: RequestInit = {
-      method,
-      headers: {
-        accept: "application/json",
-        "Content-Type": "application/json;charset=utf-8",
-        Authorization: `Bearer ${this.API_ACCESS_TOKEN}`,
-      },
-      body: body ? JSON.stringify(body) : null,
-    };
+  async getMovieUserRating(movieId: number) {
+    const endpoint = Api.generateMovieUserRatingUrl(movieId);
 
     try {
-      const response = await fetch(url, options);
-      const data = await response.json();
+      const { rated } = await ApiClient.get<MovieUserRatingResponseDTO>(
+        endpoint
+      );
 
-      if (!response.ok) {
-        this.throwError(response.status);
+      return rated;
+    } catch (e: unknown) {
+      console.error(e);
+
+      if (e instanceof ApiError) {
+        switch (e.code) {
+          case 401:
+            throw Error(ErrorMessage.UNAUTHORIZED);
+          case 404:
+            throw Error(ErrorMessage.NOT_VALID_URL);
+          case 500:
+            throw Error(ErrorMessage.INTERNAL_SERVER_ERROR);
+          default:
+            throw Error(ErrorMessage.DEFAULT);
+        }
       }
+    }
+  },
 
-      return data;
+  async postMovieUserRating(movieId: number, rating: number) {
+    const url = this.generatePostMovieUserRatingUrl(movieId);
+
+    try {
+      await ApiClient.post<MovieUserRatingRequestDTO>(url, {
+        value: rating,
+      });
     } catch (e) {
-      throw e;
+      console.error(e);
+
+      if (e instanceof ApiError) {
+        switch (e.code) {
+          case 401:
+            throw Error(ErrorMessage.UNAUTHORIZED);
+          case 404:
+            throw Error(ErrorMessage.NOT_VALID_URL);
+          case 500:
+            throw Error(ErrorMessage.INTERNAL_SERVER_ERROR);
+          default:
+            throw Error(ErrorMessage.DEFAULT);
+        }
+      }
+    }
+  },
+
+  async getMovies(page: number) {
+    const movieUrl = Api.generatePopularMoviesUrl(page);
+
+    try {
+      const { results: movies } = await ApiClient.get<{
+        results: PopularMovieListResponseDTO[];
+      }>(movieUrl);
+
+      return movies;
+    } catch (e) {
+      console.error(e);
+
+      if (e instanceof ApiError) {
+        switch (e.code) {
+          case 401:
+            throw Error(ErrorMessage.UNAUTHORIZED);
+          case 404:
+            throw Error(ErrorMessage.NOT_VALID_URL);
+          case 500:
+            throw Error(ErrorMessage.INTERNAL_SERVER_ERROR);
+          default:
+            throw Error(ErrorMessage.DEFAULT);
+        }
+      }
+    }
+  },
+
+  async searchMovies(query: string, page: number) {
+    const searchUrl = Api.generateSearchMoviesUrl(query, page);
+
+    try {
+      const { results: movies } = await ApiClient.get<{
+        results: PopularMovieListResponseDTO[];
+      }>(searchUrl);
+
+      return movies;
+    } catch (e) {
+      console.error(e);
+
+      if (e instanceof ApiError) {
+        switch (e.code) {
+          case 401:
+            throw Error(ErrorMessage.UNAUTHORIZED);
+          case 404:
+            throw Error(ErrorMessage.NOT_VALID_URL);
+          case 500:
+            throw Error(ErrorMessage.INTERNAL_SERVER_ERROR);
+          default:
+            throw Error(ErrorMessage.DEFAULT);
+        }
+      }
     }
   },
 };

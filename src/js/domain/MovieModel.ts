@@ -1,8 +1,3 @@
-import {
-  MovieDetailResponseDTO,
-  MovieUserRatingRequestDTO,
-  MovieUserRatingResponseDTO,
-} from "../../types/MovieApiDTO";
 import Api from "./Api";
 
 class MovieModel {
@@ -55,47 +50,43 @@ class MovieModel {
   }
 
   async fetchMovieDetail() {
-    const url = Api.generateMovieDetailUrl(this.#id);
-
     try {
-      const { genres } = await Api.get<MovieDetailResponseDTO>(url);
+      const genres = await Api.getMovieDetail(this.#id);
+
+      if (!genres) {
+        return;
+      }
 
       this.genres = genres.map((genre) => genre.name);
-    } catch (e: unknown) {
-      if (e instanceof Error) {
-        alert(e.message);
-      }
+    } catch (e) {
+      throw e;
     }
   }
 
   async fetchMovieUserRating() {
-    const url = Api.generateMovieUserRatingUrl(this.#id);
-
     try {
-      const { rated } = await Api.get<MovieUserRatingResponseDTO>(url);
+      const rated = await Api.getMovieUserRating(this.#id);
 
       if (!rated) {
         return;
       }
 
       this.userRating = rated.value;
-    } catch (e: unknown) {
-      if (e instanceof Error) {
-        alert(e.message);
-      }
+    } catch (e) {
+      throw e;
     }
   }
 
   async postMovieUserRating(rating: number) {
-    const url = Api.generatePostMovieUserRatingUrl(this.#id);
+    const prevUserRating = this.userRating;
 
     try {
-      await Api.post<MovieUserRatingRequestDTO>(url, {
-        value: rating,
-      });
-
+      // optimistic update
       this.userRating = rating;
+      await Api.postMovieUserRating(this.#id, rating);
     } catch (e) {
+      // rollback userRating
+      this.userRating = prevUserRating;
       throw e;
     }
   }

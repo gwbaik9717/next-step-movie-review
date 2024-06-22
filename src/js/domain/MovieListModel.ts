@@ -32,55 +32,45 @@ class MovieListModel {
     return this.#movies.find((movie) => movie.id === movieId);
   }
 
-  async fetchMovies(page: number) {
-    const movieUrl = Api.generatePopularMoviesUrl(page);
-
-    try {
-      const { results: movies } = await Api.get<{
-        results: PopularMovieListResponseDTO[];
-      }>(movieUrl);
-
-      movies.forEach((movie) => {
-        this.addMovie(
-          new MovieModel({
-            id: movie.id,
-            title: movie.title,
-            thumbnail: `${Api.THUMBNAIL_URL}${movie.poster_path}`,
-            rating: movie.vote_average,
-            overview: movie.overview,
-          })
-        );
-      });
-    } catch (e: unknown) {
-      if (e instanceof Error) {
-        alert(e.message);
-      }
-    }
+  addMovies(movies: PopularMovieListResponseDTO[]) {
+    movies.forEach((movie) => {
+      this.addMovie(
+        new MovieModel({
+          id: movie.id,
+          title: movie.title,
+          thumbnail: `${Api.THUMBNAIL_URL}${movie.poster_path}`,
+          rating: movie.vote_average,
+          overview: movie.overview,
+        })
+      );
+    });
   }
 
   async searchMovies(query: string, page: number) {
-    const searchUrl = Api.generateSearchMoviesUrl(query, page);
-
     try {
-      const { results: movies } = await Api.get<{
-        results: PopularMovieListResponseDTO[];
-      }>(searchUrl);
+      const movies = await Api.searchMovies(query, page);
 
-      movies.forEach((movie) => {
-        this.addMovie(
-          new MovieModel({
-            id: movie.id,
-            title: movie.title,
-            thumbnail: `${Api.THUMBNAIL_URL}${movie.poster_path}`,
-            rating: movie.vote_average,
-            overview: movie.overview,
-          })
-        );
-      });
-    } catch (e: unknown) {
-      if (e instanceof Error) {
-        alert(e.message);
+      if (!movies) {
+        return;
       }
+
+      this.addMovies(movies);
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  async fetchMovies(page: number) {
+    try {
+      const movies = await Api.getMovies(page);
+
+      if (!movies) {
+        return;
+      }
+
+      this.addMovies(movies);
+    } catch (e) {
+      throw e;
     }
   }
 }

@@ -17,11 +17,18 @@ const SearchBox = {
 
   async handleSubmitSearchQuery(app: App, movieList: MovieListModel) {
     MovieCardList.clear();
-
     MovieCardList.addSkeleton();
-    await app.searchMovies(movieList);
-    MovieCardList.removeSkeleton();
 
+    try {
+      await app.searchMovies(movieList);
+    } catch (e) {
+      if (e instanceof Error) {
+        alert(e.message);
+      }
+      return;
+    }
+
+    MovieCardList.removeSkeleton();
     MovieCardList.render(movieList.movies);
   },
 };

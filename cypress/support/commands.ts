@@ -1,6 +1,7 @@
 import { Method, RouteHandler } from "cypress/types/net-stubbing";
 import Api from "../../src/js/domain/Api";
 import { Page } from "../types";
+import ApiClient from "../../src/js/domain/ApiClient";
 
 Cypress.Commands.add("interceptGetEmptyPopularMovies", (page: Page) => {
   return cy.interceptRequest(
@@ -16,21 +17,21 @@ Cypress.Commands.add("interceptGetEmptyPopularMovies", (page: Page) => {
 
 Cypress.Commands.add("interceptGetPopularMovies", (page: Page) => {
   return cy.interceptRequest("GET", Api.generatePopularMoviesUrl(page), {
-    delay: 1000,
+    delay: 2000,
     fixture: `movieListPage${page}.json`,
   });
 });
 
 Cypress.Commands.add("interceptGetMovieDetail", (movieId: number) => {
   return cy.interceptRequest("GET", Api.generateMovieDetailUrl(movieId), {
-    delay: 1000,
+    delay: 2000,
     fixture: "movieDetail.json",
   });
 });
 
 Cypress.Commands.add("interceptSearchMovies", (query: string, page: Page) => {
   return cy.interceptRequest("GET", Api.generateSearchMoviesUrl(query, page), {
-    delay: 1000,
+    delay: 2000,
     fixture: "movieListSearchResult.json",
   });
 });
@@ -40,7 +41,7 @@ Cypress.Commands.add("interceptGetMovieUserRatingExists", (movieId: number) => {
     "GET",
     Api.generateMovieUserRatingUrl(Number(movieId)),
     {
-      delay: 1000,
+      delay: 2000,
       fixture: "movieUserRatingExists.json",
     }
   );
@@ -53,7 +54,7 @@ Cypress.Commands.add(
       "GET",
       Api.generateMovieUserRatingUrl(Number(movieId)),
       {
-        delay: 1000,
+        delay: 2000,
         fixture: "movieUserRatingNonExists.json",
       }
     );
@@ -107,7 +108,7 @@ Cypress.Commands.add(
       headers: {
         accept: "application/json",
         "Content-Type": "application/json;charset=utf-8",
-        Authorization: `Bearer ${Api.API_ACCESS_TOKEN}`,
+        Authorization: `Bearer ${ApiClient.API_ACCESS_TOKEN}`,
       },
       body: body ? JSON.stringify(body) : undefined,
     });

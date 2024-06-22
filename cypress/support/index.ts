@@ -1,3 +1,4 @@
+import { Method, RouteHandler } from "cypress/types/net-stubbing";
 import { Page } from "../types";
 import "./commands";
 
@@ -36,7 +37,15 @@ declare global {
     }
 
     interface Chainable {
-      requestApi(method: string, endpoint: string, body?: unknown): Chainable;
+      interceptRequest(
+        method: Method,
+        endpoint: string,
+        response?: RouteHandler
+      ): Chainable;
+    }
+
+    interface Chainable {
+      requestApi(method: Method, endpoint: string, body?: unknown): Chainable;
     }
   }
 }

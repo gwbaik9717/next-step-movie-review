@@ -1,9 +1,11 @@
+import { Method, RouteHandler } from "cypress/types/net-stubbing";
 import Api from "../../src/js/domain/Api";
 import { Page } from "../types";
 
 Cypress.Commands.add("interceptGetEmptyPopularMovies", (page: Page) => {
-  return cy.intercept(
-    Cypress.env("BASE_URL") + Api.generatePopularMoviesUrl(page),
+  return cy.interceptRequest(
+    "GET",
+    Api.generatePopularMoviesUrl(page),
     (req) => {
       req.continue((res) => {
         res.send({ results: [] });
@@ -13,42 +15,30 @@ Cypress.Commands.add("interceptGetEmptyPopularMovies", (page: Page) => {
 });
 
 Cypress.Commands.add("interceptGetPopularMovies", (page: Page) => {
-  return cy.intercept(
-    "GET",
-    Cypress.env("BASE_URL") + Api.generatePopularMoviesUrl(page),
-    {
-      delay: 1000,
-      fixture: `movieListPage${page}.json`,
-    }
-  );
+  return cy.interceptRequest("GET", Api.generatePopularMoviesUrl(page), {
+    delay: 1000,
+    fixture: `movieListPage${page}.json`,
+  });
 });
 
 Cypress.Commands.add("interceptGetMovieDetail", (movieId: number) => {
-  return cy.intercept(
-    "GET",
-    Cypress.env("BASE_URL") + Api.generateMovieDetailUrl(Number(movieId)),
-    {
-      delay: 1000,
-      fixture: "movieDetail.json",
-    }
-  );
+  return cy.interceptRequest("GET", Api.generateMovieDetailUrl(movieId), {
+    delay: 1000,
+    fixture: "movieDetail.json",
+  });
 });
 
 Cypress.Commands.add("interceptSearchMovies", (query: string, page: Page) => {
-  return cy.intercept(
-    "GET",
-    Cypress.env("BASE_URL") + Api.generateSearchMoviesUrl(query, page),
-    {
-      delay: 1000,
-      fixture: "movieListSearchResult.json",
-    }
-  );
+  return cy.interceptRequest("GET", Api.generateSearchMoviesUrl(query, page), {
+    delay: 1000,
+    fixture: "movieListSearchResult.json",
+  });
 });
 
 Cypress.Commands.add("interceptGetMovieUserRatingExists", (movieId: number) => {
-  return cy.intercept(
+  return cy.interceptRequest(
     "GET",
-    Cypress.env("BASE_URL") + Api.generateMovieUserRatingUrl(Number(movieId)),
+    Api.generateMovieUserRatingUrl(Number(movieId)),
     {
       delay: 1000,
       fixture: "movieUserRatingExists.json",
@@ -59,9 +49,9 @@ Cypress.Commands.add("interceptGetMovieUserRatingExists", (movieId: number) => {
 Cypress.Commands.add(
   "interceptGetMovieUserRatingNotExists",
   (movieId: number) => {
-    return cy.intercept(
+    return cy.interceptRequest(
       "GET",
-      Cypress.env("BASE_URL") + Api.generateMovieUserRatingUrl(Number(movieId)),
+      Api.generateMovieUserRatingUrl(Number(movieId)),
       {
         delay: 1000,
         fixture: "movieUserRatingNonExists.json",
@@ -71,9 +61,9 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add("interceptPostUserRating", (movieId: number) => {
-  return cy.intercept(
+  return cy.interceptRequest(
     "POST",
-    Cypress.env("BASE_URL") + Api.generatePostMovieUserRatingUrl(movieId),
+    Api.generatePostMovieUserRatingUrl(movieId),
     (req) => {
       req.reply((res) => {
         expect(req.body).to.have.property("value", 2);
@@ -87,9 +77,9 @@ Cypress.Commands.add("interceptPostUserRating", (movieId: number) => {
 });
 
 Cypress.Commands.add("interceptPostUserRatingFail", (movieId: number) => {
-  return cy.intercept(
+  return cy.interceptRequest(
     "POST",
-    Cypress.env("BASE_URL") + Api.generatePostMovieUserRatingUrl(movieId),
+    Api.generatePostMovieUserRatingUrl(movieId),
     (req) => {
       req.reply((res) => {
         res.send({
@@ -102,8 +92,15 @@ Cypress.Commands.add("interceptPostUserRatingFail", (movieId: number) => {
 });
 
 Cypress.Commands.add(
+  "interceptRequest",
+  (method: Method, endpoint: string, response?: RouteHandler) => {
+    return cy.intercept(method, Cypress.env("BASE_URL") + endpoint, response);
+  }
+);
+
+Cypress.Commands.add(
   "requestApi",
-  (method: string, endpoint: string, body?: unknown) => {
+  (method: Method, endpoint: string, body?: unknown) => {
     return cy.request({
       method,
       url: `${Cypress.env("BASE_URL")}${endpoint}`,
